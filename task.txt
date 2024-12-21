@@ -1,0 +1,9 @@
+REST API - JSON
+
+GET /users
+GET /users/1
+GET /users/2
+
+POST /users
+PATCH /users/1
+DELETE /users/1
