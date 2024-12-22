@@ -4,6 +4,16 @@ const users = require('./MOCK_DATA.json');
 const app = express();
 const PORT  = 8383;
 app.use(express.urlencoded({extended:false}));
+app.use((req,res,next)=>{
+    console.log("Hello from middleware 1");
+    req.myUsername = 'OMKAR SHENDGE'
+    next();
+})
+app.use((req,res,next)=>{
+    fs.appendFile("./log.txt",`\n${Date.now()}: ${req.ip} ${req.method}: ${req.path}`,(err,data)=>{
+            next();
+    })
+})
 app.get('/users',(req,res)=>{
     const html =  `<ul> 
     ${users.map(user => `<li>${user.first_name}</li>`).join("")}
@@ -15,6 +25,7 @@ app.get('/users',(req,res)=>{
 
 // ROUTES
 app.get('/api/users',(req,res)=>{
+    res.setHeader('X-myName','Omkar_Shendge') // Custom header
     return res.json(users);
 })
 
@@ -29,7 +40,7 @@ app.post('/api/users',(req,res)=>{
         const body = req.body;
         users.push({id:users.length + 1,...body})
         fs.writeFile('./MOCK_DATA.json',JSON.stringify(users),(err,data )=>{
-            return res.json({status:'success', id:users.length})
+            return res.status(201).json({status:'success', id:users.length})
         })
 })
 
